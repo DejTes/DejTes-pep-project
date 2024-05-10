@@ -89,7 +89,7 @@ public List<Account> getAllAccounts(){
 
 
 private boolean usernameExists(String username) throws SQLException {
-    String sql = "SELECT 1 FROM account WHERE username = ?";
+    String sql = "SELECT * FROM account WHERE username = ?";
     try (PreparedStatement checkStmt = this.connection.prepareStatement(sql)) {
         checkStmt.setString(1, username);
         try (ResultSet resultSet = checkStmt.executeQuery()) {
@@ -97,6 +97,12 @@ private boolean usernameExists(String username) throws SQLException {
         }
     }
 }
+
+
+public Account getAccountByUsername(String username) {
+    return null;
+}
+
 
 }
 
