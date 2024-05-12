@@ -37,8 +37,6 @@ public class AccountDAO {
             }
 
          generatedKeys = preparedStatement.getGeneratedKeys();
-         
-         
          if (generatedKeys.next()) {
             int generatedAccount_id = generatedKeys.getInt(1);
             return new Account(generatedAccount_id, account.getUsername(), account.getPassword());
@@ -86,6 +84,7 @@ public List<Account> getAllAccounts(){
     }
     return accounts;
 }
+
 
 
 private boolean usernameExists(String username) throws SQLException {

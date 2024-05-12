@@ -35,11 +35,14 @@ public class AccountService {
         if (username.isEmpty() || password.isEmpty()) {
             return Optional.empty(); // Invalid input
         }
+
         Account foundAccount = accountDAO.getAccountByUsername(username);
         if (foundAccount != null && foundAccount.getPassword().equals(password)) {
             return Optional.of(foundAccount); // Successful login
         }
         return Optional.empty(); // Login failed
+    
+    
     }
 }
 

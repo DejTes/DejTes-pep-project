@@ -1,7 +1,10 @@
 package Controller;
 
 import Model.Account;
+import Model.Message;
+
 import Service.AccountService;
+import Service.MessageService;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -20,10 +23,12 @@ import io.javalin.http.Context;
  */
 public class SocialMediaController {
     private AccountService accountService;
+    private MessageService messageService;
 
 
-    public SocialMediaController(AccountService accountService){
+    public SocialMediaController(AccountService accountService, MessageService messageService){
         this.accountService = accountService;
+        this.messageService = messageService;
     }
 
 
@@ -34,9 +39,11 @@ public class SocialMediaController {
      */
 
     public Javalin startAPI() {
-        Javalin app = Javalin.create();
+        Javalin app = Javalin.create().start(8080);
         app.post("/register", this::registerAccountHandler);
         app.post("/login", this::loginHandler);
+        app.post("/messages", this::createMessageHandler);
+        app.get("/messages", this::getAllMessagesHandler);
 
         return app;
     }
@@ -57,8 +64,7 @@ public class SocialMediaController {
             } else {
                 context.status(400).result("Account registration failed");
             }
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
             context.status(400).result("Invalid account data");
         }
     }
@@ -80,5 +86,31 @@ public class SocialMediaController {
         }
     }
 
+/*
+ * createMessageHAndler
+ */
+
+ private void createMessageHandler(Context context) {
+    try {
+        Message message = context.bodyAsClass(Message.class);
+        Message createdMessage = messageService.createMessage(message);
+        if (createdMessage != null) {
+            context.status(200).json(createdMessage);
+        } else {
+            context.status(400).result("Failed to create message");
+        }
+    } catch (Exception e) {
+        context.status(400).result("Invalid message data: " + e.getMessage());
+    }
+}
+
+private void getAllMessagesHandler(Context context) {
+    try {
+        List<Message> messages = messageService.getAllMessages();
+        context.json(messages).status(200);
+    } catch (Exception e) {
+        context.status(500).result("Internal server error: " + e.getMessage());
+    }
+}
 
 }
