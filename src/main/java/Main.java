@@ -11,10 +11,10 @@ import DAO.MessageDAO;
  */
 public class Main {
     public static void main(String[] args) {
-        AccountDAO accountDAO = new AccountDAO();
-        MessageDAO messageDAO = new MessageDAO();
-        AccountService accountService = new AccountService(accountDAO);
-        MessageService messageService = new MessageService(messageDAO);
+        // AccountDAO accountDAO = new AccountDAO();
+        // MessageDAO messageDAO = new MessageDAO();
+        // AccountService accountService = new AccountService(accountDAO);
+        // MessageService messageService = new MessageService(messageDAO);
         SocialMediaController controller = new SocialMediaController();
         Javalin app = controller.startAPI();
         app.start(8080);

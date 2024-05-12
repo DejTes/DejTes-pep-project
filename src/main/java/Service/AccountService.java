@@ -3,6 +3,7 @@ package Service;
 import DAO.AccountDAO;
 import Model.Account;
 import java.util.List;
+import java.sql.SQLException;
 
 public class AccountService {
     AccountDAO accountDAO;
@@ -15,31 +16,30 @@ public class AccountService {
      *  
      * register new account
      */
-     
-    public Account registerAccount(Account account) {
+
+    public Account createAccount(Account account){
         List<Account> accounts = accountDAO.getAllAccounts();
-        if(!account.getUsername().isEmpty() && account.getPassword().length() >=4){
-            for(Account ac : accounts){
-                if(ac.getUsername().equals(account.getUsername())){
-                    return null;
-                }
-            }
-            return accountDAO.addAccount(account);
+        if (account.getUsername().trim().isEmpty()) {
+            throw new IllegalArgumentException("Username cannot be empty.");
         }
-        return null;
+        if (account.getPassword().length() < 4) {
+            throw new IllegalArgumentException("Password must be at least 4 characters.");
+        }
+        if (accountDAO.verifyUsername(account.getUsername()) != null) {
+            throw new IllegalStateException("Username already exists.");
+        }
+        return accountDAO.addAccount(account);
     }
     
-
     /*
      * Account login
      */
     public Account login(Account account) {
         List<Account> accounts = accountDAO.getAllAccounts();
-        for(Account ac : accounts){
-            if(ac.getUsername().equals(account.getUsername()) && ac.getPassword().equals(account.getPassword())){
-                return accountDAO.login(ac);
-            }
+        if (accountDAO.verifyUsername(account.getUsername()) != null) {
+            return accountDAO.checkExistingAccount(account);
+        } else {
+            return null; 
         }
-        return null;
     }
 }

@@ -52,18 +52,18 @@ public class SocialMediaController {
     private void registerAccountHandler(Context context) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         Account account = mapper.readValue(context.body(), Account.class);
-        if (account.getUsername().isEmpty() || account.getPassword().length() < 5) {
+        if (account.getUsername().trim().isEmpty() || account.getPassword().length() < 4) {
             context.status(400).result("Username or password does not meet requirements");
             return;
         }
-        Account registerAccount = accountService.registerAccount(account);
+        Account registerAccount = accountService.createAccount(account);
         if(registerAccount != null) {
             context.json(registerAccount).status(200);
         } else {
             context.status(400).result("Failed to register account");
         }
     }
-
+    
 
     private void loginHandler(Context context) throws JsonProcessingException{
         ObjectMapper mapper = new ObjectMapper();
