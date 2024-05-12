@@ -1,50 +1,45 @@
 package Service;
 
-import Model.Account;
 import DAO.AccountDAO;
-
-import java.sql.SQLException;
+import Model.Account;
 import java.util.List;
-import java.util.Optional;
 
 public class AccountService {
-    private AccountDAO accountDAO;
-
-    public AccountService(AccountDAO accountDAO) {
-        if (accountDAO == null) {
-            throw new RuntimeException("AccountDAO cannot be null");
-        }
-        this.accountDAO = accountDAO;
+    AccountDAO accountDAO;
+    public AccountService(){
+        this.accountDAO = new AccountDAO();
     }
 
-    public Optional<Account> registerAccount(Account account) throws SQLException {
-        if (account.getUsername().isEmpty() || account.getPassword().length() < 5) {
-            return Optional.empty();
+
+    /*
+     *  
+     * register new account
+     */
+     
+    public Account registerAccount(Account account) {
+        List<Account> accounts = accountDAO.getAllAccounts();
+        if(!account.getUsername().isEmpty() && account.getPassword().length() >=4){
+            for(Account ac : accounts){
+                if(ac.getUsername().equals(account.getUsername())){
+                    return null;
+                }
+            }
+            return accountDAO.addAccount(account);
         }
-        List<Account> existingAccounts = accountDAO.getAllAccounts();
-        for (Account existingAccount : existingAccounts) {
-            if (existingAccount.getUsername().equals(account.getUsername())) {
-                return Optional.empty(); // Username already exists
+        return null;
+    }
+    
+
+    /*
+     * Account login
+     */
+    public Account login(Account account) {
+        List<Account> accounts = accountDAO.getAllAccounts();
+        for(Account ac : accounts){
+            if(ac.getUsername().equals(account.getUsername()) && ac.getPassword().equals(account.getPassword())){
+                return accountDAO.login(ac);
             }
         }
-        Account createdAccount = accountDAO.createAccount(account);
-        return Optional.ofNullable(createdAccount); // Return the created account, null if not created
-    }
-
-    public Optional<Account> login(String username, String password) {
-        if (username.isEmpty() || password.isEmpty()) {
-            return Optional.empty(); // Invalid input
-        }
-
-        Account foundAccount = accountDAO.getAccountByUsername(username);
-        if (foundAccount != null && foundAccount.getPassword().equals(password)) {
-            return Optional.of(foundAccount); // Successful login
-        }
-        return Optional.empty(); // Login failed
-    
-    
+        return null;
     }
 }
-
-    
-
