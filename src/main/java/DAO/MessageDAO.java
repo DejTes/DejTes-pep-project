@@ -8,7 +8,7 @@ import java.util.List;
 
 public class MessageDAO {
 
-    public Message mkMessage(Message message) {
+    public Message createMessage(Message message) {
         Connection connection = ConnectionUtil.getConnection();
         try{
             String sql = "insert into Message(posted_by, message_text, time_posted_epoch) values(?,?,?);";

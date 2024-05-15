@@ -30,11 +30,11 @@ public class SocialMediaController {
      */
     public Javalin startAPI() {
         Javalin app = Javalin.create();
-        app.post("/register",this::registerAccountHandler); 
+        app.post("/register", this::registerAccountHandler); 
         app.post("/login", this::loginHandler);
         app.post("/messages", this::newMessageHandler);
         app.get("/messages", this::getMessageHandler);
-        app.get("/messages/{message_id}",this::getMessageByIDHandler);
+        app.get("/messages/{message_id}", this::getMessageByIDHandler);
         app.delete("/messages/{message_id}", this::deleteMessageHandler);
         app.patch("/messages/{message_id}", this::updateMessageHandler);
         app.get("/accounts/{account_id}/messages", this::getMessageByUserHandler);
@@ -49,21 +49,21 @@ public class SocialMediaController {
     //     context.json("sample text");
     // }
 
-    private void registerAccountHandler(Context context) throws JsonProcessingException {
+    private void registerAccountHandler(Context context) {
         ObjectMapper mapper = new ObjectMapper();
-        Account account = mapper.readValue(context.body(), Account.class);
-        if (account.getUsername().trim().isEmpty() || account.getPassword().length() < 4) {
-            context.status(400).result("Username or password does not meet requirements");
-            return;
-        }
-        Account registerAccount = accountService.createAccount(account);
-        if(registerAccount != null) {
-            context.json(registerAccount).status(200);
-        } else {
+        try {
+            Account account = mapper.readValue(context.body(), Account.class);
+            Account registeredAccount = accountService.createAccount(account);
+            context.json(registeredAccount).status(200);
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            context.status(400).result("");
+        } catch (Exception e) {
             context.status(400).result("Failed to register account");
         }
     }
     
+
+
 
     private void loginHandler(Context context) throws JsonProcessingException{
         ObjectMapper mapper = new ObjectMapper();
@@ -91,10 +91,6 @@ public class SocialMediaController {
         List<Message> message = messageService.getAllMessages();
         context.json(message);
     }
-    
-    
-    
-    
     
 
     private void getMessageByIDHandler(Context context){

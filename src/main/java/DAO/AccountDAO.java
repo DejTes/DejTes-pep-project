@@ -11,7 +11,7 @@ public class AccountDAO {
 
     public Account addAccount(Account account) {
         Connection connection = ConnectionUtil.getConnection();
-        String sql = "insert into Account(username, password) values(?,?)";
+        String sql = "INSERT INTO Account(username, password) VALUES(?, ?)";
         try{
             PreparedStatement preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             preparedStatement.setString(1, account.getUsername());
@@ -19,8 +19,8 @@ public class AccountDAO {
             preparedStatement.executeUpdate();
             ResultSet resultSet = preparedStatement.getGeneratedKeys();
             if(resultSet.next()){
-                int getAccount_id = resultSet.getInt(1);
-                return new Account(getAccount_id, account.getUsername(), account.getPassword());
+                int accountId = resultSet.getInt(1);
+                return new Account(accountId, account.getUsername(), account.getPassword());
             }
 
         }catch(SQLException e){
@@ -32,8 +32,8 @@ public class AccountDAO {
   // Checks table for specified username
   public Account verifyUsername(String username) {
     Connection connection = ConnectionUtil.getConnection();
+    String sql = "SELECT * FROM account WHERE username = ?"; 
     try {
-        String sql = "SELECT * FROM account WHERE username = ?"; 
         PreparedStatement preparedStatement = connection.prepareStatement(sql);
         preparedStatement.setString(1, username);
         ResultSet rs = preparedStatement.executeQuery();
@@ -91,7 +91,7 @@ public class AccountDAO {
     public Account login(Account account) {
         Connection connection = ConnectionUtil.getConnection();
         try{
-            String sql = "select * from Account where account_id = ?";
+            String sql = "SELECT * FROM account where account_id = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, account.getAccount_id());
             ResultSet rs = preparedStatement.executeQuery();

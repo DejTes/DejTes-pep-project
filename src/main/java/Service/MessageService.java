@@ -21,7 +21,7 @@ public class MessageService {
         if(!message.getMessage_text().isEmpty() && message.getMessage_text().length() < 255){
             for(Account ac : accounts){
                 if(ac.getAccount_id() == message.getPosted_by()){
-                    return messageDAO.mkMessage(message);
+                    return messageDAO.createMessage(message);
                 }
             }
         }
