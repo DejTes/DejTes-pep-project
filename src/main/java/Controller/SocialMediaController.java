@@ -5,7 +5,7 @@ import Model.Message;
 import Service.AccountService;
 import Service.MessageService;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper; 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
 import java.util.List;
@@ -19,7 +19,7 @@ public class SocialMediaController {
     AccountService accountService;
     MessageService messageService;
 
-    public SocialMediaController(){
+    public SocialMediaController() {
         this.accountService = new AccountService();
         this.messageService = new MessageService();
     }
@@ -30,7 +30,7 @@ public class SocialMediaController {
      */
     public Javalin startAPI() {
         Javalin app = Javalin.create();
-        app.post("/register", this::registerAccountHandler); 
+        app.post("/register", this::registerAccountHandler);
         app.post("/login", this::loginHandler);
         app.post("/messages", this::newMessageHandler);
         app.get("/messages", this::getMessageHandler);
@@ -41,14 +41,8 @@ public class SocialMediaController {
         return app;
     }
 
-    /**
-     * This is an example handler for an example endpoint.
-     * @param context The Javalin Context object manages information about both the HTTP request and response.
-     */
-    // private void exampleHandler(Context context) {
-    //     context.json("sample text");
-    // }
 
+    // Handler for registeering  a new account
     private void registerAccountHandler(Context context) {
         ObjectMapper mapper = new ObjectMapper();
         try {
@@ -61,74 +55,74 @@ public class SocialMediaController {
             context.status(400).result("Failed to register account");
         }
     }
-    
 
 
 
-    private void loginHandler(Context context) throws JsonProcessingException{
+    // Handler for logging in an existing account 
+    private void loginHandler(Context context) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         Account account = mapper.readValue(context.body(), Account.class);
         Account loginAccount = accountService.login(account);
-        if(loginAccount != null){
+        if (loginAccount != null) {
             context.json(loginAccount);
-        }else{
+        } else {
             context.status(401);
         }
     }
 
-    private void newMessageHandler(Context context) throws JsonProcessingException{
+    // handler for the creation of new message
+    private void newMessageHandler(Context context) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         Message message = mapper.readValue(context.body(), Message.class);
         Message newMessage = messageService.newMessage(message);
-        if(newMessage != null){
+        if (newMessage != null) {
             context.json(mapper.writeValueAsString(newMessage));
-        }else{
+        } else {
             context.status(400);
         }
     }
 
-    private void getMessageHandler(Context context){
-        List<Message> message = messageService.getAllMessages();
+    // Handler for getting all messages
+    private void getMessageHandler(Context context) {
+        List < Message > message = messageService.getAllMessages();
         context.json(message);
     }
-    
 
-    private void getMessageByIDHandler(Context context){
+    // Retrives messages by ID
+    private void getMessageByIDHandler(Context context) {
         int id = Integer.parseInt(context.pathParam("message_id"));
         Message message = messageService.getMessageByID(id);
-        if(message != null){
+        if (message != null) {
             context.json(message);
         }
     }
 
-    private void deleteMessageHandler(Context context){
+        // Handler for deleting message
+    private void deleteMessageHandler(Context context) {
         int id = Integer.parseInt(context.pathParam("message_id"));
         Message delMessage = messageService.deleteMessage(id);
-        if(delMessage != null){
+        if (delMessage != null) {
             context.json(delMessage);
         }
     }
 
+    // Handler for Updating message
     private void updateMessageHandler(Context context) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         Message message = mapper.readValue(context.body(), Message.class);
         int id = Integer.parseInt(context.pathParam("message_id"));
         Message updatedMessage = messageService.updateMessage(id, message);
-        if(updatedMessage != null){
+        if (updatedMessage != null) {
             context.json(updatedMessage);
-        }else{
+        } else {
             context.status(400);
         }
     }
 
-    private void getMessageByUserHandler(Context context){
+    // Handler for retriveing message by user
+    private void getMessageByUserHandler(Context context) {
         int id = Integer.parseInt(context.pathParam("account_id"));
-        List<Message> message = messageService.getMessagesByUser(id);
+        List < Message > message = messageService.getMessagesByUser(id);
         context.json(message);
     }
-
-
-
-
-
 }

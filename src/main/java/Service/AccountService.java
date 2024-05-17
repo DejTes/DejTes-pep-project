@@ -11,14 +11,13 @@ public class AccountService {
         this.accountDAO = new AccountDAO();
     }
 
-
     /*
      *  
      * register new account
      */
 
     public Account createAccount(Account account){
-        //List<Account> accounts = accountDAO.getAllAccounts();
+        List<Account> accounts = accountDAO.getAllAccounts();
         if (account.getUsername().trim().isEmpty()) {
             throw new IllegalArgumentException("Username cannot be empty.");
         }
@@ -30,8 +29,6 @@ public class AccountService {
         }
         return accountDAO.addAccount(account);
     }
-
-
     
     /*
      * Account login

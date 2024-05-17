@@ -9,6 +9,7 @@ import java.util.List;
 
 public class AccountDAO {
 
+    // Adds a new account tho the database and returns the created account with its generated ID.
     public Account addAccount(Account account) {
         Connection connection = ConnectionUtil.getConnection();
         String sql = "INSERT INTO Account(username, password) VALUES(?, ?)";
@@ -29,7 +30,8 @@ public class AccountDAO {
         return null;
     }
 
-  // Checks table for specified username
+
+  // Checks table for specified username if it laready exists
   public Account verifyUsername(String username) {
     Connection connection = ConnectionUtil.getConnection();
     String sql = "SELECT * FROM account WHERE username = ?"; 
@@ -49,6 +51,7 @@ public class AccountDAO {
     return null; 
 }
 
+    // Checks if an account with the given username and password exists.
     public Account checkExistingAccount(Account login) {
         Connection connection = ConnectionUtil.getConnection();
         try {
@@ -69,6 +72,7 @@ public class AccountDAO {
         return null; 
     }
 
+        // Retrieves  all accounts 
     public List<Account> getAllAccounts() {
         Connection connection = ConnectionUtil.getConnection();
         List<Account> accounts = new ArrayList<>();
@@ -88,6 +92,7 @@ public class AccountDAO {
         return accounts;
     }
 
+    // Authenticates and account
     public Account login(Account account) {
         Connection connection = ConnectionUtil.getConnection();
         try{
